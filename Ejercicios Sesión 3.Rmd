@@ -1,0 +1,87 @@
+---
+title: "Ejercicios Sesión 3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Ainhoa Calvo Ejerique
+
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+1. Ejercicio dplyr
+
+El data frame diamonds viene cargardo en la libraría ggplot2. Se exploraraá su estructura con la función str()
+
+```{r}
+str(diamonds)
+```
+
+i) Filtrar los diamantes con corte ideal
+ 
+```{r}
+diamonds_ideal <- diamonds %>% filter(cut == "Ideal")
+head(diamonds_ideal)
+```
+
+ii) Selecionar las columnas carat, color, proce y clarity
+
+```{r}
+diamonds_select <- diamonds %>% select(carat,color,price,clarity)
+head(diamonds_select)
+```
+
+iii) Crear una nueva columna precio/quilate.
+
+```{r}
+diamonds_ncol <- diamonds %>% mutate(p_s_q=(price/carat))
+head(diamonds_ncol)
+```
+
+iv) Agrupar los diamantes por color
+
+```{r}
+diamonds_gcolor <- diamonds %>% group_by(color)
+```
+
+v) Calcular la media del precio/quilate para cada uno de los grupos anteriores
+
+```{r}
+diamonds_gcolor_mean <- diamonds %>%  mutate(p_s_q=(price/carat)) %>% group_by(color)%>%summarise(media = mean(p_s_q), n())
+diamonds_gcolor_mean
+```
+
+vi) Ordenar por precio/quilate de forma descendente
+
+```{r}
+diamonds_gcolor_mean_des <- diamonds_gcolor_mean %>% arrange(desc(media))
+diamonds_gcolor_mean_des
+```
+
+2. Ejericicio ggplot. Con el dataset diamonds intentar reproducir el gráfico de clase.
+
+En primer lugar, se realiza un muestreo aleatorio de 100 filas.
+
+```{r}
+muestra <- sample(1:nrow(diamonds),size=100, replace=FALSE)
+```
+
+En segundo lugar, se asignan los elementos de la muestra al data frame diamonds.
+
+```{r}
+diamonds_muestra <- diamonds[muestra,]
+head(diamonds_muestra)
+```
+
+En tercer lugar, se replica el gráfico visto en clase, que contiene un gráfico de dispersión y una regresión lineal ('lm'), con price como variable dependiente y color como variable dependiente.
+
+```{r pressure, echo=FALSE}
+grafico <-ggplot(diamonds_muestra, aes(x=carat, y=price, color=color))+geom_point()+xlim(0,2.5)+ylim(0,15000)+geom_smooth(method='lm', formula=y~x, aes(group=1))+ggtitle("Regression Line")
+grafico
+```

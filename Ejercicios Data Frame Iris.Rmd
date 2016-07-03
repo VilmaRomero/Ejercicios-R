@@ -1,0 +1,115 @@
+---
+title: "Ejercicio Data Frame Iris"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Ainhoa Calvo Ejerique
+
+1. ¿Cómo está estructurado el data frame? (utilizar las funciones str() y dim())
+
+El data frame iris viene cargado por defecto en R.
+
+```{r iris}
+str(iris)
+```
+
+```{r}
+dim(iris)
+```
+
+2. ¿De qué tipo es cada una de las variables del data frame?
+
+La respuesta puede apreciarse en la pregunta anterior. Asimimo podría utilizarse la función class() con un bucle for.
+
+```{r}
+nc <-ncol(iris)
+clase <-character(nc)
+for (i in 1:nc) {
+  clase[i] <-class(iris[[i]])
+  }
+clase
+```
+
+Las cuatro primeras variables del data frame son numéricas y la quinta es un factor. 
+
+3. Utilizar la función summary() para obtener un resumen de los estadísticos de las variables.
+
+```{r}
+summary(iris)
+```
+
+4. Comprobar con las funciones mean(), range(), que se obtienen los mismos valores.
+
+```{r}
+apply(iris[,1:4], 2, mean)
+```
+
+```{r}
+apply(iris[,1:4], 2, range)
+```
+
+5. Cambia los valores de las variables Sepal.Length y Sepal.Width de las 5 primeras observaciones por NA.
+
+Los valores originales son:
+
+```{r}
+iris[1:5, c("Sepal.Length", "Sepal.Width")]
+```
+
+Tras realizar el cambio:
+
+```{r}
+iris[1:5, c("Sepal.Length", "Sepal.Width")] <-NA
+iris[1:5, c("Sepal.Length", "Sepal.Width")]
+```
+
+6. ¿Qué pasa si usamos ahora las funciones mean(), range(), con las varaibles Sepal.Length y Sepal.Width? ¿Tiene el mismo problema la función summary()?
+
+Las funciones mean(), range(), no eliminan por defecto los valores NA, por defecto el argumeto na.rm=FALSE. La función summary elimina los NA.
+
+```{r}
+iris[1:5, c("Sepal.Length", "Sepal.Width")] <-NA
+mean(iris$Sepal.Length)
+mean(iris$Sepal.Width)
+range(iris$Sepal.Length)
+range(iris$Sepal.Width)
+summary(iris)
+```
+
+7. Ver la documentación de mean(), range(), etc. ¿Qué parámetro habría que cambiar para arreglar el problema anterior?
+
+Tendríamos que cambiar el valor del argumento na.rm a TRUE.
+
+```{r}
+iris[1:5, c("Sepal.Length", "Sepal.Width")] <-NA
+mean(iris$Sepal.Length, na.rm=TRUE)
+mean(iris$Sepal.Width, na.rm=TRUE)
+range(iris$Sepal.Length, na.rm=TRUE)
+range(iris$Sepal.Width, na.rm=TRUE)
+```
+
+8. Visto lo anterior, ¿por qué es importante codificar los missing values como NA y no como 0, por ejemplo?
+
+0 no es un missing value, es un valor numérico que se incorporaría al cálculo del descriptivo correspondiente. No estaríamos obteniendo el verdadero valor del descriptivo.
+
+9. Eliminar los valores NA usando na.omit()
+
+```{r}
+iris[1:5, c("Sepal.Length", "Sepal.Width")] <-NA
+na.omit(iris)
+iris[1:5, c("Sepal.Length", "Sepal.Width")]
+```
+
+10. Calcular la media de la variable Petal.Length para cada una de las distintas especies (Species). 
+
+Aplicaríamos la función tapply, utilizando como factor Species, para calcular la media de Sepal.Lenght para cada una de las distintas especies.
+
+```{r}
+petallenghtmean <-tapply(iris$Petal.Length, iris$Species, mean)
+petallenghtmean
+```
+
